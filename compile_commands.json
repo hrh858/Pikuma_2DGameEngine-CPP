@@ -1,0 +1,21 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/clang++",
+      "-c",
+      "-Wall",
+      "-std=c++17",
+      "-I./libs",
+      "-I",
+      "/opt/homebrew/include",
+      "-I",
+      "/opt/homebrew/include",
+      "-o",
+      "2dge",
+      "src/main.cpp"
+    ],
+    "directory": "/Users/hrh858/Development/Personal/2DGameEngine_Pikuma",
+    "file": "/Users/hrh858/Development/Personal/2DGameEngine_Pikuma/src/main.cpp",
+    "output": "/Users/hrh858/Development/Personal/2DGameEngine_Pikuma/2dge"
+  }
+]
