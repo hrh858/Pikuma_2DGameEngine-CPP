@@ -7,11 +7,13 @@ class Game {
      SDL_Window* m_window;
      SDL_Renderer* m_renderer;
      bool m_isRunning;
+     float m_targetMsPerFrame;
+     int m_msPreviousFrame;
 
     public:
         Game();
         ~Game();
-        void Initialize();
+        void Initialize(int targetFps);
         void Setup();
         void Run();
         void ProcessInput();

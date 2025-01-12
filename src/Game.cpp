@@ -1,25 +1,26 @@
 #include "Game.h"
+#include "Logger.h"
 #include <SDL2/SDL.h>
+#include "SDL2/SDL_timer.h"
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_video.h>
 #include <SDL2/SDL_image.h>
 #include <glm/glm.hpp>
-#include <iostream>
 
 Game::Game() {
-    std::cout << "Created a game instance" << std::endl;
+    Logger::Log("Created a game instance");
 }
 
 Game::~Game() {
     m_isRunning = false;
-    std::cout << "Destroyed the game instance" << std::endl;
+    Logger::Log("Destroyed the game instance");
 }
 
-void Game::Initialize() {
+void Game::Initialize(int targetFps) {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-        std::cerr << "Error initializing SDL." << std::endl;
+        Logger::Err("Error initializing SDL");
         return;
     }
 
@@ -27,7 +28,7 @@ void Game::Initialize() {
     // like the refresh rate and the format.
     SDL_DisplayMode dispMode;
     if (SDL_GetCurrentDisplayMode(0, &dispMode) != 0) {
-        std::cerr << "Error getting current display mode." << std::endl;
+        Logger::Err("Error getting current display mode");
         return;
     }
     // m_windowWidth = dispMode.w;
@@ -44,17 +45,18 @@ void Game::Initialize() {
         SDL_WINDOW_BORDERLESS
     );
     if (!m_window) {
-        std::cerr << "Error creating SDL window." << std::endl;
+        Logger::Err("Error creating SDL window");
         return;
     }
 
     m_renderer = SDL_CreateRenderer(
         m_window,
         -1,
-        SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+        // SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+        SDL_RENDERER_ACCELERATED
     );
     if (!m_renderer) {
-        std::cerr << "Error creating SDL renderer." << std::endl;
+        Logger::Err("Error creating SDL renderer");
         return;
     }
 
@@ -63,6 +65,8 @@ void Game::Initialize() {
     /*    return;*/
     /*}*/
 
+    m_targetMsPerFrame = 1000.0f / targetFps;
+    m_msPreviousFrame = SDL_GetTicks();
     m_isRunning = true;
 }
 
@@ -71,7 +75,7 @@ glm::vec2 playerVelocity;
 
 void Game::Setup() {
     playerPosition = glm::vec2(10.0, 20.0);
-    playerVelocity = glm::vec2(1.0, 0.0);
+    playerVelocity = glm::vec2(100.0, 0.0);
 }
 
 void Game::Run() {
@@ -100,7 +104,16 @@ void Game::ProcessInput() {
 }
 
 void Game::Update() {
-    playerPosition += playerVelocity;
+    const unsigned int frameStartTime = SDL_GetTicks();
+    const float deltaT = float(frameStartTime - m_msPreviousFrame) / 1000.0f;
+    m_msPreviousFrame = frameStartTime;
+
+    playerPosition += playerVelocity * deltaT;
+
+    const unsigned int frameTime = SDL_GetTicks() - frameStartTime;
+    if (frameTime >= 0 && frameTime < m_targetMsPerFrame) {
+        SDL_Delay(m_targetMsPerFrame - frameTime);
+    }
 }
 
 void Game::Render() {
@@ -120,7 +133,7 @@ void Game::Render() {
     SDL_DestroyTexture(tank_texture);
 
     // ...
-    
+
     SDL_RenderPresent(m_renderer);
 }
 
