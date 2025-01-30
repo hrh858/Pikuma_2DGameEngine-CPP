@@ -70,12 +70,9 @@ void Game::Initialize(int targetFps) {
     m_isRunning = true;
 }
 
-glm::vec2 playerPosition;
-glm::vec2 playerVelocity;
-
 void Game::Setup() {
-    playerPosition = glm::vec2(10.0, 20.0);
-    playerVelocity = glm::vec2(100.0, 0.0);
+    // TODO: Initialize systems
+    // TODO: Use the registry to create entities
 }
 
 void Game::Run() {
@@ -108,7 +105,9 @@ void Game::Update() {
     const float deltaT = float(frameStartTime - m_msPreviousFrame) / 1000.0f;
     m_msPreviousFrame = frameStartTime;
 
-    playerPosition += playerVelocity * deltaT;
+
+    // TODO: Make systems update
+
 
     const unsigned int frameTime = SDL_GetTicks() - frameStartTime;
     if (frameTime >= 0 && frameTime < m_targetMsPerFrame) {
@@ -120,19 +119,7 @@ void Game::Render() {
     SDL_SetRenderDrawColor(m_renderer, 21, 21, 21, 255);
     SDL_RenderClear(m_renderer);
 
-
-    /*SDL_Rect player = { .x = 10, .y = 10, .w = 20, .h = 20 };*/
-    /*SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);*/
-    /*SDL_RenderFillRect(m_renderer, &player);*/
-    SDL_Surface* tank_surface = IMG_Load("./assets/images/tank-tiger-right.png");
-    SDL_Texture* tank_texture = SDL_CreateTextureFromSurface(m_renderer, tank_surface);
-    SDL_FreeSurface(tank_surface);
-
-    SDL_Rect tank_rect = { .x = static_cast<int>(playerPosition.x), .y = static_cast<int>(playerPosition.y), .w = 32, .h = 32 };
-    SDL_RenderCopy(m_renderer, tank_texture, NULL, &tank_rect);
-    SDL_DestroyTexture(tank_texture);
-
-    // ...
+    // Render game objects... 
 
     SDL_RenderPresent(m_renderer);
 }

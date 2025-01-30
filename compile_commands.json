@@ -1,21 +1,82 @@
 [
   {
     "arguments": [
-      "/usr/bin/clang++",
+      "/usr/bin/g++",
       "-c",
       "-Wall",
+      "-Wfatal-errors",
       "-std=c++17",
-      "-I./libs",
+      "-I./libs/",
       "-I",
       "/opt/homebrew/include",
       "-I",
       "/opt/homebrew/include",
       "-o",
       "2dge",
-      "src/main.cpp"
+      "src/Main.cpp"
     ],
     "directory": "/Users/hrh858/Development/Personal/2DGameEngine_Pikuma",
-    "file": "/Users/hrh858/Development/Personal/2DGameEngine_Pikuma/src/main.cpp",
+    "file": "/Users/hrh858/Development/Personal/2DGameEngine_Pikuma/src/Main.cpp",
+    "output": "/Users/hrh858/Development/Personal/2DGameEngine_Pikuma/2dge"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-Wall",
+      "-Wfatal-errors",
+      "-std=c++17",
+      "-I./libs/",
+      "-I",
+      "/opt/homebrew/include",
+      "-I",
+      "/opt/homebrew/include",
+      "-o",
+      "2dge",
+      "src/Game/Game.cpp"
+    ],
+    "directory": "/Users/hrh858/Development/Personal/2DGameEngine_Pikuma",
+    "file": "/Users/hrh858/Development/Personal/2DGameEngine_Pikuma/src/Game/Game.cpp",
+    "output": "/Users/hrh858/Development/Personal/2DGameEngine_Pikuma/2dge"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-Wall",
+      "-Wfatal-errors",
+      "-std=c++17",
+      "-I./libs/",
+      "-I",
+      "/opt/homebrew/include",
+      "-I",
+      "/opt/homebrew/include",
+      "-o",
+      "2dge",
+      "src/Logger/Logger.cpp"
+    ],
+    "directory": "/Users/hrh858/Development/Personal/2DGameEngine_Pikuma",
+    "file": "/Users/hrh858/Development/Personal/2DGameEngine_Pikuma/src/Logger/Logger.cpp",
+    "output": "/Users/hrh858/Development/Personal/2DGameEngine_Pikuma/2dge"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-Wall",
+      "-Wfatal-errors",
+      "-std=c++17",
+      "-I./libs/",
+      "-I",
+      "/opt/homebrew/include",
+      "-I",
+      "/opt/homebrew/include",
+      "-o",
+      "2dge",
+      "src/ECS/ECS.cpp"
+    ],
+    "directory": "/Users/hrh858/Development/Personal/2DGameEngine_Pikuma",
+    "file": "/Users/hrh858/Development/Personal/2DGameEngine_Pikuma/src/ECS/ECS.cpp",
     "output": "/Users/hrh858/Development/Personal/2DGameEngine_Pikuma/2dge"
   }
 ]
