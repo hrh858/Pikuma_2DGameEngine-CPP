@@ -19,12 +19,12 @@ private:
 public:
     Entity(int id) : _id(id) {};
     int GetId() const;
-    bool operator==(const Entity& other) const
+    bool operator==(const Entity &other) const
     {
         return _id == other._id;
     }
 
-    bool operator<(const Entity& other) const
+    bool operator<(const Entity &other) const
     {
         return _id < other._id;
     }
@@ -66,13 +66,14 @@ public:
     void RequireComponent();
 };
 
-class BasePool {
-    public:
-        virtual ~BasePool() {}
+class BasePool
+{
+public:
+    virtual ~BasePool() {}
 };
 
 template <typename T>
-class Pool: public BasePool
+class Pool : public BasePool
 {
 private:
     std::vector<T> _data;
@@ -85,8 +86,8 @@ public:
     void Resize(size_t size) { _data.resize(size); }
     void Clear() { _data.clear(); }
     void Add(T object) { _data.push_back(object); }
-    const T& Get(size_t index) const { return _data[index]; }
-    const T& operator[](size_t index) const { return _data[index]; }
+    const T &Get(size_t index) const { return _data[index]; }
+    const T &operator[](size_t index) const { return _data[index]; }
 };
 
 class Registry
@@ -98,7 +99,7 @@ private:
     std::set<Entity> _entitiesToBeKilled;
 
     // Keeps pointers to pools of components for each possible component.
-    // The pools are as big as the maximum amount of entities. 
+    // The pools are as big as the maximum amount of entities.
     std::vector<std::unique_ptr<BasePool>> _componentPools;
 
     // Keeps track of which components are 'enabled' for each entity.
@@ -111,11 +112,26 @@ private:
 public:
     Registry() = default;
     Entity CreateEntity();
-    template<typename TComponent, typename ...TArgs> void AddComponent(Entity e, TArgs&& ...args); 
-    template<typename T> void RemoveComponent(Entity e);
-    template<typename T> bool HasComponent(Entity e) const;
-    template<typename T> T& GetComponent(Entity e) const;
+    // Component functions
+    template <typename TComponent, typename... TArgs>
+    void AddComponent(Entity e, TArgs &&...args);
+    template <typename TComponent>
+    void RemoveComponent(Entity e);
+    template <typename TComponent>
+    bool HasComponent(Entity e) const;
+    template <typename TComponent>
+    TComponent &GetComponent(Entity e) const;
+    // System functions
+    template <typename TSystem, typename... TArgs>
+    void AddSystem(TArgs &&...args);
+    template <typename TSystem>
+    void RemoveSystem();
+    template <typename TSystem>
+    bool HasSystem() const;
+    template <typename TSystem>
+    TSystem &GetSystem() const;
     void AddEntityToSystem(Entity e);
+
     // Here is where we actually insert/delete entities that
     // are waiting to be added/removed from the registry.
     // This is done like this to avoid having entities that
@@ -152,17 +168,20 @@ void Registry::AddComponent(Entity e, TArgs &&...args)
     const auto componentId = Component<TComponent>::GetId();
     const auto entityId = e.GetId();
 
-    if (componentId > _componentPools.size()) {
+    if (componentId > _componentPools.size())
+    {
         _componentPools.resize(componentId + 1, nullptr);
     }
 
-    if (!_componentPools[componentId]) {
+    if (!_componentPools[componentId])
+    {
         _componentPools[componentId] = std::make_unique<Pool<TComponent>>();
     }
 
     auto componentPool = _componentPools[componentId];
-    
-    if (entityId > componentPool->GetSize()) {
+
+    if (entityId > componentPool->GetSize())
+    {
         componentPool->Resize(_numEntities);
     }
 
@@ -171,7 +190,6 @@ void Registry::AddComponent(Entity e, TArgs &&...args)
     componentPool->Set(entityId, newComponent);
 
     _entityComponentSignature[entityId].set(componentId);
-    _entityComponentSignature[entityId].(componentId);
 }
 
 template <typename TComponent>
@@ -190,6 +208,34 @@ bool Registry::HasComponent(Entity e) const
     const auto entityId = e.GetId();
 
     return _entityComponentSignature[entityId].test(componentId);
+}
+
+template <typename TSystem, typename... TArgs>
+void Registry::AddSystem(TArgs &&...args)
+{
+    auto id = std::type_index(typeid(TSystem));
+    _systems.insert(std::make_pair(id, std::make_unique<TSystem>(std::forward<TArgs>(args)...)));
+}
+
+template <typename TSystem>
+void Registry::RemoveSystem()
+{
+    auto systemPos = _systems.find(std::type_index(typeid(TSystem)));
+    _systems.erase(systemPos);
+}
+
+template <typename TSystem>
+bool Registry::HasSystem() const
+{
+    auto systemPos = _systems.find(std::type_index(typeid(TSystem)));
+    return systemPos != _systems.end();
+}
+
+template <typename TSystem>
+TSystem &Registry::GetSystem() const
+{
+    auto systemPos = _systems.find(std::type_index(typeid(TSystem)));
+    return *std::static_pointer_cast<TSystem>(systemPos->second);
 }
 
 #endif

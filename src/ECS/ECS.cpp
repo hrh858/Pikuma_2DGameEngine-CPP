@@ -60,3 +60,27 @@ void Registry::KillEntity()
     Logger::Log("Entity killed...");
     _numEntities--;
 }
+
+void Registry::AddEntityToSystem(Entity e)
+{
+    const auto &entityComponentSignature = _entityComponentSignature[e.GetId()];
+
+    // Iterate through all of the systems.
+    for (auto &system : _systems)
+    {
+        // If the entity signature matches with
+        // the system signature then the entity should
+        // be added to the system.
+        const auto& systemComponentSignature = system.second->GetSignature();
+        // Bitwise AND of both signatures and if the remaining
+        // set bits are the same as those of the system signature
+        // then this entity should be 'affected' by this system.
+        bool isInterested = (entityComponentSignature & systemComponentSignature) == systemComponentSignature;
+        if (isInterested) {
+            // Add entity to system.
+            system.second->AddEntity(e);
+        }
+        
+    }
+
+}
